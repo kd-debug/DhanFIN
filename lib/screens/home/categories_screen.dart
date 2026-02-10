@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project_android/screens/home/profile_screen.dart';
 
 class CategoriesScreen extends StatefulWidget {
   final double totalBalance;
@@ -17,6 +18,8 @@ class CategoriesScreen extends StatefulWidget {
 }
 
 class _CategoriesScreenState extends State<CategoriesScreen> {
+  int _selectedNavIndex = 1; // Categories is at index 1
+
   final List<Map<String, dynamic>> _categories = [
     {'name': 'Food', 'icon': Icons.restaurant_outlined, 'color': Colors.blue},
     {
@@ -325,6 +328,32 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
           ],
         ),
       ),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildNavItem(Icons.home, 0),
+                _buildNavItem(Icons.pie_chart_outline, 1),
+                _buildNavItem(Icons.credit_card, 2),
+                _buildNavItem(Icons.person_outline, 3),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -369,6 +398,49 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem(IconData icon, int index) {
+    final isSelected = _selectedNavIndex == index;
+    return GestureDetector(
+      onTap: () {
+        if (index == 0) {
+          // Home
+          Navigator.pop(context);
+        } else if (index == 1) {
+          // Already on Categories
+          return;
+        } else if (index == 2) {
+          // Wallet - Coming soon
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Wallet feature coming soon!'),
+              duration: Duration(seconds: 1),
+            ),
+          );
+        } else if (index == 3) {
+          // Profile
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const ProfileScreen()),
+          );
+        }
+      },
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? const Color(0xFF1B5E20).withOpacity(0.1)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Icon(
+          icon,
+          color: isSelected ? const Color(0xFF1B5E20) : Colors.grey[400],
+          size: 26,
         ),
       ),
     );

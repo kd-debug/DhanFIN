@@ -759,9 +759,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
               children: [
                 _buildNavItem(Icons.home, 0),
                 _buildNavItem(Icons.pie_chart_outline, 1),
-                _buildNavItem(Icons.swap_horiz, 2),
-                _buildNavItem(Icons.credit_card, 3),
-                _buildNavItem(Icons.person_outline, 4),
+                _buildNavItem(Icons.credit_card, 2),
+                _buildNavItem(Icons.person_outline, 3),
               ],
             ),
           ),
@@ -906,19 +905,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
           );
         } else if (index == 2) {
-          // Transactions
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => TransactionScreen(
-                transactions: _transactions,
-                totalBalance: _totalIncome - _totalExpenses,
-                totalIncome: _totalIncome,
-                totalExpenses: _totalExpenses,
-              ),
-            ),
-          );
-        } else if (index == 3) {
           // Wallet/Cards - Coming soon
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -926,13 +912,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
               duration: Duration(seconds: 1),
             ),
           );
-        } else if (index == 4) {
+        } else if (index == 3) {
           // Profile
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (context) => const ProfileScreen(),
-            ),
+            MaterialPageRoute(builder: (context) => const ProfileScreen()),
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:project_android/services/auth_service.dart';
 import 'package:project_android/screens/auth/login_screen.dart';
+import 'package:project_android/screens/home/edit_profile_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -13,6 +14,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final AuthService _authService = AuthService();
   String _userName = 'User';
   String _userEmail = '';
+  String _userId = '';
+  int _selectedNavIndex = 3; // Profile is at index 3
 
   @override
   void initState() {
@@ -26,6 +29,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
       setState(() {
         _userName = metadata['full_name'] ?? 'User';
         _userEmail = metadata['email'] ?? '';
+      });
+    }
+
+    // Generate a simple user ID (you can replace this with actual ID from database)
+    if (_authService.currentUser != null) {
+      setState(() {
+        _userId = _authService.currentUser!.$id.substring(0, 8);
       });
     }
   }
@@ -43,10 +53,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text(
-              'Logout',
-              style: TextStyle(color: Colors.red),
-            ),
+            child: const Text('Logout', style: TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -98,7 +105,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Row(
                       children: [
                         IconButton(
-                          icon: const Icon(Icons.arrow_back, color: Colors.white),
+                          icon: const Icon(
+                            Icons.arrow_back,
+                            color: Colors.white,
+                          ),
                           onPressed: () => Navigator.pop(context),
                         ),
                         const Expanded(
@@ -116,7 +126,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ],
                     ),
                   ),
-                  
+
                   // Profile Picture & Info
                   Padding(
                     padding: const EdgeInsets.fromLTRB(20, 0, 20, 30),
@@ -128,6 +138,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           decoration: BoxDecoration(
                             color: Colors.white,
                             shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 4),
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black.withOpacity(0.1),
@@ -147,16 +158,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           _userName,
                           style: const TextStyle(
                             color: Colors.white,
-                            fontSize: 24,
+                            fontSize: 22,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          _userEmail,
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(0.9),
-                            fontSize: 14,
+                        const SizedBox(height: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.badge_outlined,
+                                color: Colors.white.withOpacity(0.9),
+                                size: 16,
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                _userId.isEmpty ? '--------' : _userId,
+                                style: TextStyle(
+                                  color: Colors.white.withOpacity(0.9),
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -165,106 +198,147 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
               ),
             ),
-            
+
             // Menu Items
             Expanded(
-              child: ListView(
+              child: Padding(
                 padding: const EdgeInsets.all(20),
-                children: [
-                  _buildMenuItem(
-                    icon: Icons.person_outline,
-                    title: 'Edit Profile',
-                    subtitle: 'Update your personal information',
-                    onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Edit profile feature coming soon!'),
-                          duration: Duration(seconds: 1),
-                        ),
-                      );
-                    },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFE8F5E9),
+                    borderRadius: BorderRadius.circular(20),
                   ),
-                  _buildMenuItem(
-                    icon: Icons.notifications_outlined,
-                    title: 'Notifications',
-                    subtitle: 'Manage notification preferences',
-                    onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Notifications feature coming soon!'),
-                          duration: Duration(seconds: 1),
-                        ),
-                      );
-                    },
-                  ),
-                  _buildMenuItem(
-                    icon: Icons.security_outlined,
-                    title: 'Security',
-                    subtitle: 'Password and security settings',
-                    onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Security settings coming soon!'),
-                          duration: Duration(seconds: 1),
-                        ),
-                      );
-                    },
-                  ),
-                  _buildMenuItem(
-                    icon: Icons.help_outline,
-                    title: 'Help & Support',
-                    subtitle: 'Get help and contact support',
-                    onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Support feature coming soon!'),
-                          duration: Duration(seconds: 1),
-                        ),
-                      );
-                    },
-                  ),
-                  _buildMenuItem(
-                    icon: Icons.info_outline,
-                    title: 'About',
-                    subtitle: 'App version and information',
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: const Text('About DhanFIN'),
-                          content: const Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('DhanFIN - Personal Finance Manager'),
-                              SizedBox(height: 8),
-                              Text('Version 1.0.0'),
-                              SizedBox(height: 8),
-                              Text('© 2026 DhanFIN. All rights reserved.'),
-                            ],
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: const Text('OK'),
+                  child: Column(
+                    children: [
+                      _buildMenuItem(
+                        icon: Icons.person_outline,
+                        title: 'Account Settings',
+                        color: Colors.blue,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const EditProfileScreen(),
                             ),
-                          ],
-                        ),
-                      );
-                    },
+                          );
+                        },
+                      ),
+                      const Divider(height: 1, indent: 70, endIndent: 20),
+                      _buildMenuItem(
+                        icon: Icons.help_outline,
+                        title: 'Help',
+                        color: Colors.blue,
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('Help & Support'),
+                              content: const Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Need help with DhanFIN?'),
+                                  SizedBox(height: 12),
+                                  Text('Email: support@dhanfin.com'),
+                                  SizedBox(height: 8),
+                                  Text('Phone: +1 234 567 8900'),
+                                ],
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: const Text('OK'),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                      const Divider(height: 1, indent: 70, endIndent: 20),
+                      _buildMenuItem(
+                        icon: Icons.logout,
+                        title: 'Logout',
+                        color: Colors.blue,
+                        onTap: _handleLogout,
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 20),
-                  _buildMenuItem(
-                    icon: Icons.logout,
-                    title: 'Logout',
-                    subtitle: 'Sign out of your account',
-                    iconColor: Colors.red,
-                    onTap: _handleLogout,
-                  ),
-                ],
+                ),
               ),
             ),
           ],
+        ),
+      ),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildNavItem(Icons.home, 0),
+                _buildNavItem(Icons.pie_chart_outline, 1),
+                _buildNavItem(Icons.credit_card, 2),
+                _buildNavItem(Icons.person_outline, 3),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem(IconData icon, int index) {
+    final isSelected = _selectedNavIndex == index;
+    return GestureDetector(
+      onTap: () {
+        if (index == 0) {
+          // Home
+          Navigator.pop(context);
+        } else if (index == 1) {
+          // Categories - need to navigate with proper data
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Please access Categories from Home screen'),
+              duration: Duration(seconds: 1),
+            ),
+          );
+        } else if (index == 2) {
+          // Wallet - Coming soon
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Wallet feature coming soon!'),
+              duration: Duration(seconds: 1),
+            ),
+          );
+        } else if (index == 3) {
+          // Already on Profile
+          return;
+        }
+      },
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? const Color(0xFF1B5E20).withOpacity(0.1)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Icon(
+          icon,
+          color: isSelected ? const Color(0xFF1B5E20) : Colors.grey[400],
+          size: 26,
         ),
       ),
     );
@@ -273,51 +347,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildMenuItem({
     required IconData icon,
     required String title,
-    required String subtitle,
+    required Color color,
     required VoidCallback onTap,
-    Color? iconColor,
   }) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
+    return ListTile(
+      leading: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.15),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Icon(icon, color: color, size: 24),
       ),
-      child: ListTile(
-        leading: Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: (iconColor ?? const Color(0xFF1B5E20)).withOpacity(0.1),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Icon(
-            icon,
-            color: iconColor ?? const Color(0xFF1B5E20),
-            size: 24,
-          ),
+      title: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+          color: Colors.black87,
         ),
-        title: Text(
-          title,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
-          ),
-        ),
-        subtitle: Text(
-          subtitle,
-          style: TextStyle(
-            fontSize: 13,
-            color: Colors.grey[600],
-          ),
-        ),
-        trailing: Icon(
-          Icons.chevron_right,
-          color: Colors.grey[400],
-        ),
-        onTap: onTap,
       ),
+      onTap: onTap,
     );
   }
 }
